@@ -1,0 +1,51 @@
+@page
+@model SystemsManagerModel
+@using RDMUI.Models;
+@{
+    ViewData["Title"] = "Manage Systems";
+}
+<h2>@ViewData["Title"]</h2>
+
+@{
+    if(!string.IsNullOrWhiteSpace(Model.Message))
+    {
+        <div class="msgContainer">@Model.Message</div>
+    }
+}
+
+@{
+    if (Model.client.ItemInFocus)
+    {
+        <h3> @Model.FocusedItem.Name </h3>
+        <form method="POST">
+            <ul>
+                <li hidden="true">ID: <input asp-for="FocusedItem.ID"/></li>
+                <li>Name: <input asp-for="FocusedItem.Name"/></li>
+                <li>Active?: <input asp-for="FocusedItem.Active"/></li>
+            </ul>
+            <input type="submit" value="Submit" />
+        </form>
+        <br/>
+        <br/>
+        <br/>
+    }
+}
+
+<br/>
+<h3>Existing Systems</h3>
+<ul>
+        <li><a href="?action=A">Add New System....</a></li>
+@{
+    foreach (RDSystem s in Model.ExistingSystems)
+    {
+        <li>
+            <a href="?focus=@s.ID">@s.Name</a>
+            <ul>
+                <li>ID: @s.ID</li>
+                <li>Active: @s.Active</li>
+            </ul>
+        </li>        
+    }
+}
+</ul>
+

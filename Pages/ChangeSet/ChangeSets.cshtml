@@ -1,0 +1,64 @@
+@page
+@model ChangeSetsModel
+@using RDMUI.Models;
+@{
+    ViewData["Title"] = "Manage Change Sets";
+}
+<h2>@ViewData["Title"]</h2>
+
+@{
+    if(!string.IsNullOrWhiteSpace(Model.Message))
+    {
+        <div class="msgContainer">@Model.Message</div>
+    }
+}
+
+@{
+    if (Model.client.ItemInFocus)
+    {
+        <h3> @Model.FocusedItem.Name </h3>
+        <form method="POST">
+            <ul>
+                <li hidden="true">ID: <input asp-for="FocusedItem.ID"/></li>
+                <li>Release ID:  <select asp-for="FocusedItem.ReleaseID">
+                @{foreach (Release r in Model.ExistingReleases)
+                {
+                    <option value="@r.ID">@r.Name</option>
+                }}
+                </select> </li>
+                <li>Name: <input asp-for="FocusedItem.Name"/></li>
+                <li>Status: <select asp-for="FocusedItem.ChangeSetStatus"> 
+                @{foreach (StatusCode s in Enum.GetValues(typeof(StatusCode)))
+                {
+                    <option value="@s">@s.ToString()</option>
+                }}                
+                </select></li>
+                <li>Active?: <input asp-for="FocusedItem.Active"/></li>
+            </ul>
+            <input type="submit" value="Submit" />
+        </form>
+        <br/>
+        <br/>
+        <br/>
+    }
+}
+<h3>Existing Change Sets: </h3>
+<ul>
+    <li><a href="?action=A">Add New Change Set....</a></li>
+    @{
+        foreach (ChangeSet s in Model.ExistingChangeSets)
+        {
+            <li>
+                <a href="?focus=@s.ID">@s.Name</a>
+                <ul>
+                    <li>ID: @s.ID</li>
+                    <li>Release ID: @s.ReleaseID</li>
+                    <li>Status: @s.ChangeSetStatus.ToString() </li>
+                    <li>Number of changes: @s.Changes.Count </li>
+
+                </ul>
+            </li>        
+        }
+    }
+</ul>
+

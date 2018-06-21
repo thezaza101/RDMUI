@@ -1,0 +1,43 @@
+@page
+@model ElementManagerModel
+@using RDMUI.Models;
+@{
+    ViewData["Title"] = "Manage Element";
+}
+<h2>@ViewData["Title"]</h2>
+
+@{
+    if(!string.IsNullOrWhiteSpace(Model.Message))
+    {
+        <div class="msgContainer">@Model.Message</div>
+    }
+}
+
+@{
+    if (Model.client.ItemInFocus)
+    {
+        <h3> @Model.FocusedItem.ID </h3>
+        <form method="POST">
+        <select asp-for="SelectedChangeSet.ID">
+            @{foreach (ChangeSet s in Model.TableChangeSet)
+            {
+                <option value="@s.ID">@s.Name</option>
+            }}
+            </select>
+            <ul>
+                <li hidden="true">ID: <input asp-for="FocusedItem.ID"/></li>
+                @for (int i = 0; i < Model.FocusedItem.Values.Count(); i++)
+                {
+                    <li>@Model.FocusedItem.Values.ElementAt(i).Key: <input asp-for="@Model.FocusedItem.Values.ElementAt(i).Value"/></li>
+                }
+            </ul>
+            <br />
+            <input type="submit" value="Submit" />
+        </form>
+        <br/>
+        <br/>
+        <br/>
+    }
+}
+
+

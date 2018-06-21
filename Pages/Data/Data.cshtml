@@ -1,0 +1,113 @@
+@page
+@model DataModel
+@using RDMUI.Models;
+@{
+    ViewData["Title"] = "Manage Data";
+}
+@section PageSpecificScript {
+   <script type="text/javascript">
+        $(document).ready(function() {
+            // Setup - add a text input to each footer cell
+            $('#bodyDataTable tfoot th').each( function () {
+                var title = $(this).text();
+                $(this).html( '<input type="text" placeholder="Search '+title+'" />' );
+            } );
+        
+            // DataTable
+            var table = $('#bodyDataTable').DataTable({
+                "scrollY": '70vh',
+                "scrollCollapse": true,
+                "scrollX": true
+            });
+        
+            // Apply the search
+            table.columns().every( function () {
+                var that = this;
+        
+                $( 'input', this.footer() ).on( 'keyup change', function () {
+                    if ( that.search() !== this.value ) {
+                        that
+                            .search( this.value )
+                            .draw();
+                    }
+                } );
+            } );
+        } );
+   </script>
+ }
+<h2>@ViewData["Title"]</h2>
+
+@{
+    if(!string.IsNullOrWhiteSpace(Model.Message))
+    {
+        <div class="msgContainer">@Model.Message</div>
+    }
+}
+
+@{
+    if (!Model.client.ItemInFocus)
+    {
+        <h3>Select table:</h3>
+        <ul>
+            @{
+                foreach (Table t in Model.TablesList)
+                {
+                    <li><a href="?focus=@t.ID">@t.ID</a></li>        
+                }
+            }
+        </ul>
+    }
+}
+
+<table id="bodyDataTable" class="display" style="width:90%;">
+@{
+    if (Model.client.ItemInFocus)
+    {
+        <thead>
+            <tr>
+                @{foreach (KeyValuePair<string, string> kvp in Model.FocusedItem.TableElements.First().Value.Values)
+                {
+                    <th>@kvp.Key</th>
+                }}
+            </tr>
+        </thead>
+        <tbody>
+            @{foreach (KeyValuePair<string, Element> kvp in Model.FocusedItem.TableElements)
+            {
+                <tr>
+                    @{foreach (KeyValuePair<string, string> element in @kvp.Value.Values)
+                    {
+                        <td><div style="height:40px; overflow:hidden"><a href="ElementManager?focus=@Model.client.GetElementbyIDFromIdentifier(@kvp.Value.ID)&tableId=@Model.FocusedItem.ID">@element.Value</a></div></td>
+                    }}
+                </tr>
+            }}
+        </tbody>
+        <tfoot>
+            <tr>
+                @{foreach (KeyValuePair<string, string> kvp in Model.FocusedItem.TableElements.First().Value.Values)
+                {
+                    <th>@kvp.Key</th>
+                }}
+            </tr>
+        </tfoot>
+
+    }
+}
+</table>
+
+@{
+    if (Model.client.ItemInFocus)
+    {
+        <h3>Table Properties:</h3>
+        <a>Edit..</a>
+        <ul>
+            @{foreach (KeyValuePair<string, string> kvp in Model.FocusedItem.TableProperties)
+            {
+                <li>@kvp.Key</li>
+                <ul>
+                    <li>@kvp.Value</li>
+                </ul>
+            }}
+        </ul>
+    }
+}

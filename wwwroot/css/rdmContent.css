@@ -1,0 +1,34 @@
+.msgContainer {
+    background: #dfb15b;
+}
+
+.rdmContentContainer {
+    background: #6e9aa5;
+}
+
+.rdmContentContainer ul {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+.rdmContentContainer ul li {
+    list-style-type: none;
+    margin: 5px;
+    padding: 5px;
+    display: block;
+}
+
+.listExpandContent {
+
+}
+
+.listExpandContent + input {
+    display: none;
+    /* hide the checkboxes */
+}
+
+.listExpandContent + input + div {
+    display: none;
+}
+

@@ -1,0 +1,50 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+<h1>Dashboard</h1>
+
+<div class="row">
+    <div class="col-md-3">
+        <h2>Server status</h2>
+        <ul>
+            <li>@ViewData["ServerStatus"]</li>
+        </ul>
+    </div>
+    <div class="col-md-3">
+        <h2>Content</h2>
+        <ul>
+            <li>@ViewData["systemCount"] Systems</li>
+            <li>@ViewData["releaseCount"] Releases</a></li>
+            <li>@ViewData["changeSetCount"] ChangeSets</a></li>
+            <li>@ViewData["tableCount"] Tables</a></li>
+        </ul>
+    </div>
+    <div class="col-md-3">
+        <h2>Tables</h2>
+        <ul>
+            @{
+                if (Model.ServerConnectionAlive)
+                {
+                    foreach (string s in Model.TableList)
+                    {
+                        <li><a href="Data/Data?focus=@s">@s</a></li>
+                    }
+                }
+                else
+                {
+                    <li>No server connection</li>
+                }
+            }
+        </ul>
+    </div>
+    <div class="col-md-3">
+        <h2>Run &amp; Deploy</h2>
+        <ul>
+            <li><a href="https://go.microsoft.com/fwlink/?LinkID=517851">Run your app</a></li>
+            <li><a href="https://go.microsoft.com/fwlink/?LinkID=517853">Run tools such as EF migrations and more</a></li>
+            <li><a href="https://go.microsoft.com/fwlink/?LinkID=398609">Publish to Microsoft Azure App Service</a></li>
+        </ul>
+    </div>
+</div>
