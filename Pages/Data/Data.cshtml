@@ -58,6 +58,31 @@
         </ul>
     }
 }
+@{
+    if (Model.client.ItemInFocus)
+    {
+        <h4>Releases:</h4>
+        <ul>
+            @{
+                foreach (Release r in Model.TableRelease)
+                {
+                    <li><a href="?focus=@Model.FocusedItem.ID&rel=@r.ID">@r.Name</a></li>
+                    <ul>
+                        @{foreach (ChangeSet c in Model.TableChangeSets)
+                        {
+                            if(c.ReleaseID == r.ID)
+                            {
+                                <li><a href="?focus=@Model.FocusedItem.ID&rel=@r.ID&cs=@c.ID">@c.Name</a></li>
+                            }
+                        }}        
+                    </ul>
+                }
+            }
+        </ul>
+    }
+}
+
+
 
 <table id="bodyDataTable" class="display" style="width:90%;">
 @{
@@ -74,7 +99,7 @@
         <tbody>
             @{foreach (KeyValuePair<string, Element> kvp in Model.FocusedItem.TableElements)
             {
-                <tr>
+                <tr style="@kvp.Value.GetStyle()">
                     @{foreach (KeyValuePair<string, string> element in @kvp.Value.Values)
                     {
                         <td><div style="height:40px; overflow:hidden"><a href="ElementManager?focus=@Model.client.GetElementbyIDFromIdentifier(@kvp.Value.ID)&tableId=@Model.FocusedItem.ID">@element.Value</a></div></td>

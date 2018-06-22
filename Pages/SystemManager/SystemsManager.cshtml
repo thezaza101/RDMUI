@@ -1,6 +1,33 @@
 @page
 @model SystemsManagerModel
 @using RDMUI.Models;
+@section PageSpecificScript {
+   <script type="text/javascript">
+        $(document).ready(function() {
+            // Setup - add a text input to each footer cell
+            $('#bodyDataTable tfoot th').each( function () {
+                var title = $(this).text();
+                $(this).html( '<input type="text" placeholder="Search '+title+'" />' );
+            } );
+        
+            // DataTable
+            var table = $('#bodyDataTable').DataTable();
+        
+            // Apply the search
+            table.columns().every( function () {
+                var that = this;
+        
+                $( 'input', this.footer() ).on( 'keyup change', function () {
+                    if ( that.search() !== this.value ) {
+                        that
+                            .search( this.value )
+                            .draw();
+                    }
+                } );
+            } );
+        } );
+   </script>
+ }
 @{
     ViewData["Title"] = "Manage Systems";
 }
@@ -33,19 +60,30 @@
 
 <br/>
 <h3>Existing Systems</h3>
-<ul>
-        <li><a href="?action=A">Add New System....</a></li>
-@{
-    foreach (RDSystem s in Model.ExistingSystems)
-    {
-        <li>
-            <a href="?focus=@s.ID">@s.Name</a>
-            <ul>
-                <li>ID: @s.ID</li>
-                <li>Active: @s.Active</li>
-            </ul>
-        </li>        
-    }
-}
-</ul>
-
+<a href="?action=A">Add New System....</a>
+<table id="bodyDataTable" class="display" style="width:90%;">
+    <thead>
+        <tr>
+            <th> Name </th>
+            <th> Active? </th>
+            <th> ID </th>
+        </tr>
+    </thead>
+    <tbody>        
+        @{foreach (RDSystem s in Model.ExistingSystems)
+        {
+        <tr>
+            <td><a href="?focus=@s.ID">@s.Name</a></td>
+            <td>@s.Active</td>
+            <td>@s.ID</td>
+        </tr>        
+        }}
+    </tbody>     
+    <tfoot>
+        <tr>
+            <th> Name </th>
+            <th> Active? </th>
+            <th> ID </th>
+        </tr>
+    </tfoot>
+</table>

@@ -17,9 +17,12 @@ namespace RDMUI.Pages
 
         public Element FocusedItem;
 
+        public string tableId;
+
         public List<ChangeSet> TableChangeSet;
         public ChangeSet SelectedChangeSet;
         
+        public Dictionary<string, string> Values = new Dictionary<string, string>();
 
 
         public ElementManagerModel()
@@ -30,6 +33,7 @@ namespace RDMUI.Pages
 
         public void OnGet(string focus, string tableId, string action)
         {
+            this.tableId = tableId;
             if (action=="A")
             {
                 FocusedItem = new Element(){ID="NEW"};
@@ -43,7 +47,9 @@ namespace RDMUI.Pages
                     {
                         FocusedItem = client.GetElement(tableId.Trim(), focus.Trim());
                         TableChangeSet = client.GetChangeSetsForTable(tableId,true);
+                        Values = FocusedItem.Values;
                         client.ItemInFocus = true;  
+                        Message = (TableChangeSet.Count == 0) ? "Please create a changeset for this table first" : "";
                     }
                     catch (Exception e)
                     {
@@ -54,20 +60,37 @@ namespace RDMUI.Pages
             }
         }
 
-        public void OnPost(Element FocusedItem, ChangeSet SelectedChangeSet)
+        public void OnPost(Element FocusedItem, Dictionary<string, string> Values, ChangeSet SelectedChangeSet, string tableId)
         {
-            KeyValuePair<string,string> dx =  FocusedItem.Values.ElementAt(0);
-            /*
-            if (FocusedItem.ID !="NEW")
-            {
-                //TODO Code to create List<Changes> and post
+            FocusedItem.Values = Values;
+            if (!string.IsNullOrWhiteSpace(SelectedChangeSet.ID))
+            {            
+                List<Change> listChanges;
+                if (FocusedItem.ID !="NEW")
+                {
+                    Element originalElement = client.GetElement(tableId.Trim(), client.GetElementbyIDFromIdentifier(FocusedItem.ID));
+                    listChanges = originalElement.GenerateChangeDelta(FocusedItem,SelectedChangeSet.ID,tableId);
+                }
+                else
+                {
+                    Change c = new Change();
+                    c.Active = true;
+                    c.ChangeSetID = SelectedChangeSet.ID;
+                    c.ElementID = FocusedItem.ID;
+                    c.NewElementPayload = FocusedItem;
+                    c.TableID = tableId;
+                    listChanges = new List<Change>();
+                    listChanges.Add(c);
+                }
+                if (listChanges.Count > 0)
+                {
+                    client.PostItem<Change>(listChanges);
+                }
             }
             else
             {
-                //TODO Code to create/delete item              
+                Message = "Please select a changeset";
             }
-            //TODO Redirect to data page with table in focus
-             */          
         }
     }
 }

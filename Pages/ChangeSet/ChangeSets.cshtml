@@ -4,6 +4,37 @@
 @{
     ViewData["Title"] = "Manage Change Sets";
 }
+@section PageSpecificScript {
+   <script type="text/javascript">
+        $(document).ready(function() {
+            // Setup - add a text input to each footer cell
+            $('#bodyDataTable tfoot th').each( function () {
+                var title = $(this).text();
+                $(this).html( '<input type="text" placeholder="Search '+title+'" />' );
+            } );
+        
+            // DataTable
+            var table = $('#bodyDataTable').DataTable({
+                "scrollY": '70vh',
+                "scrollCollapse": true,
+                "scrollX": true
+            });
+        
+            // Apply the search
+            table.columns().every( function () {
+                var that = this;
+        
+                $( 'input', this.footer() ).on( 'keyup change', function () {
+                    if ( that.search() !== this.value ) {
+                        that
+                            .search( this.value )
+                            .draw();
+                    }
+                } );
+            } );
+        } );
+   </script>
+ }
 <h2>@ViewData["Title"]</h2>
 
 @{
@@ -43,22 +74,39 @@
     }
 }
 <h3>Existing Change Sets: </h3>
-<ul>
-    <li><a href="?action=A">Add New Change Set....</a></li>
-    @{
-        foreach (ChangeSet s in Model.ExistingChangeSets)
+<a href="?action=A">Add New Change Set....</a>
+<table id="bodyDataTable" class="display" style="width:90%;">
+    <thead>
+        <tr>
+            <th> Name </th>
+            <th> Active? </th>
+            <th> Release </th>
+            <th> Change Set Status </th>
+            <th> Change Count </th>
+            <th> ID </th>
+        </tr>
+    </thead>
+    <tbody>
+        @{foreach (ChangeSet s in Model.ExistingChangeSets)
         {
-            <li>
-                <a href="?focus=@s.ID">@s.Name</a>
-                <ul>
-                    <li>ID: @s.ID</li>
-                    <li>Release ID: @s.ReleaseID</li>
-                    <li>Status: @s.ChangeSetStatus.ToString() </li>
-                    <li>Number of changes: @s.Changes.Count </li>
-
-                </ul>
-            </li>        
-        }
-    }
-</ul>
-
+        <tr>
+            <td><a href="?focus=@s.ID">@s.Name</a></td>
+            <td>@s.Active</td>
+            <td>@s.ReleaseID</td>
+            <td>@s.ChangeSetStatus.ToString()</td>
+            <td>@s.Changes.Count</td>
+            <td>@s.ID</td>
+        </tr>      
+        }}
+    </tbody>
+    <tfoot>
+        <tr>
+            <th> Name </th>
+            <th> Active? </th>
+            <th> Release </th>
+            <th> Change Set Status </th>
+            <th> Change Count </th>
+            <th> ID </th>
+        </tr>
+    </tfoot>
+</table>

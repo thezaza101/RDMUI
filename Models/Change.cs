@@ -13,6 +13,7 @@ namespace RDMUI.Models
         public string ElementName {get;set;}
         public string NewValue {get;set;}
         [Newtonsoft.Json.JsonIgnore]    
-        public object ObjectReference {get;set;}   
+        public object ObjectReference {get;set;}  
+        public object NewElementPayload {get; set;} 
     }
 }

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using RDMUI.Models;
 
 namespace RDMUI.Pages
 {
@@ -35,6 +36,31 @@ namespace RDMUI.Pages
         {
             string output ="";
             output = response.Content.ReadAsStringAsync().Result;
+            return output;
+        }
+        public static List<Change> GenerateChangeDelta (this Element inElement, Element compare, string changeSetID, string tableId)
+        {
+            List<Change> output = new List<Change>();
+                
+            Change c;
+            List<string> newKeys = new List<string>();
+            foreach (string key in inElement.Values.Keys)
+            {
+                if(inElement.Values[key].Replace("\n", string.Empty).Replace("\r", string.Empty) != compare.Values[key].Replace("\n", string.Empty).Replace("\r", string.Empty))
+                {
+                    c = new Change() {
+                        Action = ChangeAction.UpdateElement,
+                        Active = true,
+                        ChangeSetID = changeSetID,
+                        ElementID = inElement.ID,
+                        ElementName = key,
+                        NewValue = compare.Values[key],
+                        TableID = tableId
+                    };
+                    output.Add(c);
+                }
+            }                
+            
             return output;
         }
     }

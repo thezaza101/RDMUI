@@ -44,7 +44,7 @@ namespace RDMUI.Pages
         public T GetItemByID<T>(string id)
         {
             T output;
-            string data = HTTPClient.GetAsync(GetEndPoint<Table>(id)).Result.Content.ReadAsStringAsync().Result;
+            string data = HTTPClient.GetAsync(GetEndPoint<T>(id)).Result.Content.ReadAsStringAsync().Result;
             output = JsonConvert.DeserializeObject<T>(data);
             return output;
         }
@@ -56,15 +56,26 @@ namespace RDMUI.Pages
             output = JsonConvert.DeserializeObject<Element>(data);
             return output;
         }
-        public List<ChangeSet> GetChangeSetsForTable(string tableID, bool ignoreChanges = false)
-        {
-            string attr = ignoreChanges ? "?tableID="+tableID+"&ignoreChanges=true" : "?tableID="+tableID;
 
+        public List<Release> GetReleasesForTable(string tableID, bool listOnly = false)
+        {
+            List<Release> output;
+            string attr = listOnly ? "?tableID="+tableID+"&list=true" : "?tableID="+tableID;
+            string data = HTTPClient.GetAsync(GetEndPoint<Release>()+attr).Result.Content.ReadAsStringAsync().Result;
+            output = JsonConvert.DeserializeObject<List<Release>>(data);
+            return output;            
+        }
+        public List<ChangeSet> GetChangeSetsForTable(string tableID, bool ignoreChanges = false, bool listOnly = false)
+        {
             List<ChangeSet> output;
+
+            string attr = ignoreChanges ? "?tableID="+tableID+"&ignoreChanges=true" : "?tableID="+tableID;
+            attr = listOnly ? attr + "&list=true" : attr;
             string data = HTTPClient.GetAsync(GetEndPoint<ChangeSet>()+attr).Result.Content.ReadAsStringAsync().Result;
             output = JsonConvert.DeserializeObject<List<ChangeSet>>(data);
             return output;
         }
+        
 
         public HttpResponseMessage PutItemByID<T>(string id, object content)
         {

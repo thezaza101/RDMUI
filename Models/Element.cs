@@ -9,6 +9,21 @@ namespace RDMUI.Models
     {
         [Key]
         public string ID {get;set;}
-        public Dictionary<string, string> Values = new Dictionary<string, string>(); 
+        public Dictionary<string, string> Values = new Dictionary<string, string>();
+
+        public string Style {get; set;}
+
+        public string GetStyle()
+        {
+            if (string.IsNullOrWhiteSpace(Style))
+            {
+                return "";
+            }
+            else
+            {
+                return Style;
+            }
+        } 
+        
     }
 }
