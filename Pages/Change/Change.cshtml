@@ -1,0 +1,127 @@
+@page
+@model ChangeModel
+@using RDMUI;
+@using RDMUI.Models;
+@{
+    ViewData["Title"] = "Manage Change";
+}
+@section PageSpecificScript {
+   <script type="text/javascript">
+        $(document).ready(function() {
+            // Setup - add a text input to each footer cell
+            $('#bodyDataTable tfoot th').each( function () {
+                var title = $(this).text();
+                $(this).html( '<input type="text" placeholder="Search '+title+'" />' );
+            } );
+        
+            // DataTable
+            var table = $('#bodyDataTable').DataTable({
+                "scrollY": '70vh',
+                "scrollCollapse": true
+            });
+        
+            // Apply the search
+            table.columns().every( function () {
+                var that = this;
+        
+                $( 'input', this.footer() ).on( 'keyup change', function () {
+                    if ( that.search() !== this.value ) {
+                        that
+                            .search( this.value )
+                            .draw();
+                    }
+                } );
+            } );
+        } );
+   </script>
+ }
+<h2>@ViewData["Title"]</h2>
+
+@{
+    if(!string.IsNullOrWhiteSpace(Model.Message))
+    {
+        <div class="msgContainer">@Model.Message</div>
+    }
+}
+
+<form method="POST">
+<table id="bodyDataTable" class="display" style="width:90%;">
+@{
+    if (Model.client.ItemInFocus)
+    {        
+        if(Model.FocusedItem.Action == ChangeAction.AddElement)
+        {
+            <thead>
+                <tr>
+                    <th>Property</th>
+                    <th>Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var key in Model.Values.Keys)
+                    {
+                        <tr>
+                            <td>@key.ToString(): </td>
+                            <td><input asp-for="Values[key]" /></td>
+                        </tr>
+                    }    
+                <tr hidden>
+                    <td><input asp-for="FocusedItem.ChangeSetID" /></td>
+                    <td><input asp-for="FocusedItem.TableID" /></td>
+                    <td><input asp-for="FocusedItem.ElementID" /></td>
+                </tr>
+                <tr hidden>
+                    <td><input asp-for="FocusedItem.ID" /></td>
+                    <td><input asp-for="FocusedItem.Action" /></td>
+                    <td><input asp-for="FocusedItem.ElementName" /></td>
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th>Property</th>
+                    <th>Value</th>
+                </tr>
+            </tfoot>
+        } 
+        else
+        {
+            <thead>
+                <tr>
+                    <th>Old @Model.FocusedItem.ElementName</th>
+                    <th>New @Model.FocusedItem.ElementName</th>
+                    <th>Diffrence</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>@Model.ExistingItem.Values[@Model.FocusedItem.ElementName]</td>
+                    <td> <input asp-for="FocusedItem.NewValue"/></td>
+                    <td>@Html.Raw(@Model.GetComprasonHTML(@Model.FocusedItem.TableID, @Model.FocusedItem.ElementID, @Model.FocusedItem.ElementName, @Model.FocusedItem.NewValue))</td>
+                </tr>       
+                <tr hidden>
+                    <td><input asp-for="FocusedItem.ChangeSetID" /></td>
+                    <td><input asp-for="FocusedItem.TableID" /></td>
+                    <td><input asp-for="FocusedItem.ElementID" /></td>
+                </tr>
+                <tr hidden>
+                    <td><input asp-for="FocusedItem.ID" /></td>
+                    <td><input asp-for="FocusedItem.Action" /></td>
+                    <td><input asp-for="FocusedItem.ElementName" /></td>
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th>Old @Model.FocusedItem.ElementName</th>
+                    <th>New @Model.FocusedItem.ElementName</th>
+                    <th>Diffrence</th>
+                </tr>
+            </tfoot>
+        }
+    }    
+}
+</table>
+@{if (Model.client.ItemInFocus)
+    { <span>Active? : <input asp-for="FocusedItem.Active" /></span> }}
+<input type="submit" value="Submit" />
+</form>
+

@@ -5,6 +5,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using RDMUI.Models;
 using System.ComponentModel.DataAnnotations;
+using textdiffcore;
+using textdiffcore.DiffOutputGenerators;
+using textdiffcore.TextDiffEngine;
 
 namespace RDMUI.Pages
 {
@@ -15,7 +18,7 @@ namespace RDMUI.Pages
         public List<Release> ExistingReleases {get;set;}
 
         public ChangeSet FocusedItem;
-
+        public List<Change> FocusedItemChanges {get; set;}
 
         public string Message { get; set; }
 
@@ -27,7 +30,7 @@ namespace RDMUI.Pages
 
         public void OnGet(string focus, string action)
         {
-            ExistingChangeSets = client.GetListOf<ChangeSet>();
+            ExistingChangeSets = client.GetListOf<ChangeSet>(true);
 
             if (action=="A")
             {
@@ -41,7 +44,8 @@ namespace RDMUI.Pages
                 {
                     try
                     {
-                        FocusedItem = ExistingChangeSets.Single(i => i.ID.Equals(focus.Trim())); 
+                        FocusedItem = client.GetItemByID<ChangeSet>(focus);
+                        FocusedItemChanges = FocusedItem.Changes;
                         ExistingReleases = new List<Release>();
                         ExistingReleases.Add(client.GetItemByID<Release>(FocusedItem.ReleaseID));
                         client.ItemInFocus = true;  
@@ -55,6 +59,17 @@ namespace RDMUI.Pages
             }
 
 
+        }
+        public string GetReleaseName(string id)
+        {
+            return client.GetItemByID<Release>(id).Name;
+        }
+        public string GetComprasonHTML(string tableId, string elementId, string property, string newValue)
+        {
+            Element old = client.GetElement(tableId,client.GetElementbyIDFromIdentifier(elementId));
+            string oldValue = old.Values[property];
+            TextDiff diffobj = new TextDiff(new csDiff(), new HTMLDiffOutputGenerator("span", "style", "color:#003300;background-color:#ccff66;","color:#990000;background-color:#ffcc99;text-decoration:line-through;",""));
+            return diffobj.GenerateDiffOutput(oldValue,newValue);
         }
         public void OnPost(ChangeSet FocusedItem)
         {

@@ -16,8 +16,7 @@
             // DataTable
             var table = $('#bodyDataTable').DataTable({
                 "scrollY": '70vh',
-                "scrollCollapse": true,
-                "scrollX": true
+                "scrollCollapse": true
             });
         
             // Apply the search
@@ -71,42 +70,81 @@
         <br/>
         <br/>
         <br/>
+        <table id="bodyDataTable" class="display" style="width:90%;">
+            <thead>
+                <tr>
+                    <th>Active?</th>
+                    <th>Action</th>
+                    <th>Property</th>
+                    <th>Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{foreach (Change c in Model.FocusedItemChanges)
+                {
+                <tr>
+                    <td><a herf="Change/Change?focus=@c.ID">@c.Active</a></td>
+                    <td>@c.Action</td>
+                    <td>@c.ElementName</td>
+                    @{if (@c.Action == ChangeAction.AddElement)
+                    {
+                        <td>zzz</td>
+                    }
+                    else
+                    {
+                        <td>@Html.Raw(@Model.GetComprasonHTML(@c.TableID, @c.ElementID, @c.ElementName, @c.NewValue))</td>
+                    }}
+                </tr>      
+                }}            
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th>Active?</th>
+                    <th>Action</th>
+                    <th>Property</th>
+                    <th>Value</th>
+                </tr>
+            </tfoot>
+        </table>
     }
 }
-<h3>Existing Change Sets: </h3>
-<a href="?action=A">Add New Change Set....</a>
-<table id="bodyDataTable" class="display" style="width:90%;">
-    <thead>
-        <tr>
-            <th> Name </th>
-            <th> Active? </th>
-            <th> Release </th>
-            <th> Change Set Status </th>
-            <th> Change Count </th>
-            <th> ID </th>
-        </tr>
-    </thead>
-    <tbody>
-        @{foreach (ChangeSet s in Model.ExistingChangeSets)
-        {
-        <tr>
-            <td><a href="?focus=@s.ID">@s.Name</a></td>
-            <td>@s.Active</td>
-            <td>@s.ReleaseID</td>
-            <td>@s.ChangeSetStatus.ToString()</td>
-            <td>@s.Changes.Count</td>
-            <td>@s.ID</td>
-        </tr>      
-        }}
-    </tbody>
-    <tfoot>
-        <tr>
-            <th> Name </th>
-            <th> Active? </th>
-            <th> Release </th>
-            <th> Change Set Status </th>
-            <th> Change Count </th>
-            <th> ID </th>
-        </tr>
-    </tfoot>
-</table>
+
+@{
+    if(!Model.client.ItemInFocus)
+    {
+        <h3>Existing Change Sets: </h3>
+        <a href="?action=A">Add New Change Set....</a>
+        <table id="bodyDataTable" class="display" style="width:90%;">
+            <thead>
+                <tr>
+                    <th> Name </th>
+                    <th> Active? </th>
+                    <th> Release </th>
+                    <th> Change Set Status </th>
+                    <th> ID </th>
+                </tr>
+            </thead>
+            <tbody>
+                @{foreach (ChangeSet s in Model.ExistingChangeSets)
+                {
+                <tr>
+                    <td><a href="?focus=@s.ID">@s.Name</a></td>
+                    <td>@s.Active</td>
+                    <td>@Model.GetReleaseName(@s.ReleaseID)</td>
+                    <td>@s.ChangeSetStatus.ToString()</td>
+                    <td>@s.ID</td>
+                </tr>      
+                }}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th> Name </th>
+                    <th> Active? </th>
+                    <th> Release </th>
+                    <th> Change Set Status </th>
+                    <th> ID </th>
+                </tr>
+            </tfoot>
+        </table>
+    }
+}

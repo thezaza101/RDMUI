@@ -4,12 +4,74 @@
 @{
     ViewData["Title"] = "Manage Element";
 }
+@section PageSpecificScript {
+   <script type="text/javascript">
+        $(document).ready(function() {
+            // Setup - add a text input to each footer cell
+            $('#bodyDataTable tfoot th').each( function () {
+                var title = $(this).text();
+                $(this).html( '<input type="text" placeholder="Search '+title+'" />' );
+            } );
+        
+            // DataTable
+            var table = $('#bodyDataTable').DataTable({
+                "ordering": false,
+                "paging": false
+            });
+        
+            // Apply the search
+            table.columns().every( function () {
+                var that = this;
+        
+                $( 'input', this.footer() ).on( 'keyup change', function () {
+                    if ( that.search() !== this.value ) {
+                        that
+                            .search( this.value )
+                            .draw();
+                    }
+                } );
+            } );
+        } );
+   </script>
+ }
 <h2>@ViewData["Title"]</h2>
 
 @{
     if(!string.IsNullOrWhiteSpace(Model.Message))
     {
         <div class="msgContainer">@Model.Message</div>
+    }
+}
+
+@{
+    if(!Model.client.ItemInFocus)
+    {
+        <table id="bodyDataTable" class="display" style="width:70%;">
+        <thead>
+            <tr>
+                <td>Property</td>
+                <td>Value</td>
+            </tr>
+        </thead>
+        <tbody>
+        @{if(Model.ListChanges != null)
+        {
+            foreach (Change c in Model.ListChanges)
+            {
+                <tr>
+                    <td>@c.ElementName</td>
+                    <td>@c.NewValue</td>
+                </tr>
+            } 
+        }}
+        </tbody>
+        <tfoot>
+            <tr>
+                <td>Property</td>
+                <td>Value</td>
+            </tr>
+        </tfoot>
+        </table>
     }
 }
 
@@ -28,14 +90,34 @@
             <input asp-for="tableId" hidden />
             <br />
             <br />
-            <ul>
-                <li hidden="true">ID: <input asp-for="FocusedItem.ID"/></li>
-                @foreach (var key in Model.Values.Keys)
-                {
-                    <li>@key.ToString(): <input asp-for="Values[key]" /></li>
-                }
-            </ul>
-            <br />
+
+            <table id="bodyDataTable" class="display" style="width:70%;">
+                <thead>
+                    <tr>
+                        <td>Attribute</td>
+                        <td>Value</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="display:none;">
+                        <td>ID:</td>
+                        <td><input asp-for="FocusedItem.ID"/></td>
+                    </tr>
+                    @foreach (var key in Model.Values.Keys)
+                    {
+                        <tr>
+                            <td>@key.ToString(): </td>
+                            <td><input asp-for="Values[key]" type="text" /></td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td>Attribute</td>
+                        <td>Value</td>
+                    </tr>
+                </tfoot>
+            </table>
             <input type="submit" value="Submit" />
         </form>
         <br/>

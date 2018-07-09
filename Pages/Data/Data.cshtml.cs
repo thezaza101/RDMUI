@@ -11,8 +11,6 @@ namespace RDMUI.Pages
 {
     public class DataModel : PageModel
     {
-        //https://datatables.net/purchase/index
-
         public RDMClient client {get;}
         public string Message { get; set; }
         public List<Table> TablesList {get; private set;}        

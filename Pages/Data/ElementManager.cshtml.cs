@@ -23,7 +23,7 @@ namespace RDMUI.Pages
         public ChangeSet SelectedChangeSet;
         
         public Dictionary<string, string> Values = new Dictionary<string, string>();
-
+        public List<Change> ListChanges;
 
         public ElementManagerModel()
         {
@@ -65,11 +65,13 @@ namespace RDMUI.Pages
             FocusedItem.Values = Values;
             if (!string.IsNullOrWhiteSpace(SelectedChangeSet.ID))
             {            
-                List<Change> listChanges;
+                
                 if (FocusedItem.ID !="NEW")
                 {
                     Element originalElement = client.GetElement(tableId.Trim(), client.GetElementbyIDFromIdentifier(FocusedItem.ID));
-                    listChanges = originalElement.GenerateChangeDelta(FocusedItem,SelectedChangeSet.ID,tableId);
+                    ListChanges = originalElement.GenerateChangeDelta(FocusedItem,SelectedChangeSet.ID,tableId);
+                    Message = "The following changes were made as part of the selected changeset:";
+
                 }
                 else
                 {
@@ -79,12 +81,12 @@ namespace RDMUI.Pages
                     c.ElementID = FocusedItem.ID;
                     c.NewElementPayload = FocusedItem;
                     c.TableID = tableId;
-                    listChanges = new List<Change>();
-                    listChanges.Add(c);
+                    ListChanges = new List<Change>();
+                    ListChanges.Add(c);
                 }
-                if (listChanges.Count > 0)
+                if (ListChanges.Count > 0)
                 {
-                    client.PostItem<Change>(listChanges);
+                    client.PostItem<Change>(ListChanges);
                 }
             }
             else
