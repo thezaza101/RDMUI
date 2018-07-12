@@ -18,6 +18,7 @@ namespace RDMUI.Pages
         RDMClient client;
         public List<string> TableList {get; set;}
         public bool ServerConnectionAlive {get; set;} = false;
+        public string FlowerData {get; set;}
         public IndexModel()
         {   
             client = new RDMClient();
@@ -51,6 +52,7 @@ namespace RDMUI.Pages
                 ViewData["releaseCount"] = (string)responseObject["releaseCount"];
                 ViewData["changeSetCount"] = (string)responseObject["changeSetCount"];
                 ViewData["tableCount"] = (string)responseObject["tableCount"];
+                FlowerData = responseObject["status"].ToString();
                 var tbls = (JArray)responseObject["tableList"];
                 List<JToken> tbls1 = tbls.ToList();
                 TableList = new List<string>();

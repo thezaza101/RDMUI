@@ -62,7 +62,7 @@ namespace RDMUI.Pages
         {
             Element old = client.GetElement(tableId,client.GetElementbyIDFromIdentifier(elementId));
             string oldValue = old.Values[property];
-            TextDiff diffobj = new TextDiff(new csDiff(), new HTMLDiffOutputGenerator("span", "style", "color:#003300;background-color:#ccff66;","color:#990000;background-color:#ffcc99;text-decoration:line-through;",""));
+            TextDiff diffobj = new TextDiff(new MyersDiff(), new HTMLDiffOutputGenerator("span", "style", "color:#003300;background-color:#ccff66;","color:#990000;background-color:#ffcc99;text-decoration:line-through;",""));
             return diffobj.GenerateDiffOutput(oldValue,newValue);
         }
         public void OnPost(Change FocusedItem, Dictionary<string, string> Values)

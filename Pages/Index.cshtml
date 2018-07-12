@@ -3,8 +3,17 @@
 @{
     ViewData["Title"] = "Home page";
 }
+@section PageSpecificScript {
+    <script src="https://d3js.org/d3.v3.min.js"></script>
+    <script src="~/js/CodeFlower.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            var myFlower = new CodeFlower("#visualization", 350, 220).update(JSON.parse(document.getElementById('flowerData').innerText));
+        });
+    </script>
+ }
 <h1>Dashboard</h1>
-
+<div id ="flowerData" hidden>@Model.FlowerData</div>
 <div class="row">
     <div class="col-md-3">
         <h2>Server status</h2>
@@ -40,11 +49,6 @@
         </ul>
     </div>
     <div class="col-md-3">
-        <h2>Run &amp; Deploy</h2>
-        <ul>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkID=517851">Run your app</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkID=517853">Run tools such as EF migrations and more</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkID=398609">Publish to Microsoft Azure App Service</a></li>
-        </ul>
+        <div id="visualization"></div>
     </div>
 </div>

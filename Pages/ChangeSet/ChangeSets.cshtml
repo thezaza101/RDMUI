@@ -83,16 +83,16 @@
                 @{foreach (Change c in Model.FocusedItemChanges)
                 {
                 <tr>
-                    <td><a herf="Change/Change?focus=@c.ID">@c.Active</a></td>
+                    <td>@c.Active</td>
                     <td>@c.Action</td>
                     <td>@c.ElementName</td>
                     @{if (@c.Action == ChangeAction.AddElement)
                     {
-                        <td>zzz</td>
+                        <td><a href="../../Change/Change?focus=@c.ID">Click here to view</a></td>
                     }
                     else
                     {
-                        <td>@Html.Raw(@Model.GetComprasonHTML(@c.TableID, @c.ElementID, @c.ElementName, @c.NewValue))</td>
+                        <td><a href="../../Change/Change?focus=@c.ID">@Html.Raw(@Model.GetComprasonHTML(@c.TableID, @c.ElementID, @c.ElementName, @c.NewValue))</a></td>
                     }}
                 </tr>      
                 }}            

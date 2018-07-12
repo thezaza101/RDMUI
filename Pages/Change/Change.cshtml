@@ -95,7 +95,7 @@
             <tbody>
                 <tr>
                     <td>@Model.ExistingItem.Values[@Model.FocusedItem.ElementName]</td>
-                    <td> <input asp-for="FocusedItem.NewValue"/></td>
+                    <td>@Model.FocusedItem.NewValue</td>
                     <td>@Html.Raw(@Model.GetComprasonHTML(@Model.FocusedItem.TableID, @Model.FocusedItem.ElementID, @Model.FocusedItem.ElementName, @Model.FocusedItem.NewValue))</td>
                 </tr>       
                 <tr hidden>
@@ -120,6 +120,16 @@
     }    
 }
 </table>
+
+@{if(Model.FocusedItem.Action == ChangeAction.AddElement)
+{
+}
+else
+{
+    <h3>Update Change</h3>
+    <textarea rows="4" cols="50" asp-for="FocusedItem.NewValue"></textarea>
+}}
+<br/>
 @{if (Model.client.ItemInFocus)
     { <span>Active? : <input asp-for="FocusedItem.Active" /></span> }}
 <input type="submit" value="Submit" />
