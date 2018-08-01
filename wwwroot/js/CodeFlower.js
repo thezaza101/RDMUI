@@ -72,6 +72,18 @@ CodeFlower.prototype.update = function(json) {
     .classed('directory', function(d) { return (d._children || d.children) ? 1 : 0; })
     .attr("r", function(d) { return d.children ? 10 : 6; })
     .style("fill", function color(d) {
+      if (d.level == "0") {
+        return "rgb(0, 12, 51)";
+      } else if (d.level == "1") {
+        return "rgb(0, 36, 153)";
+      } else if (d.level == "2") {
+        return "rgb(0, 60, 255)";
+      } else if (d.level == "3") {
+        return "rgb(102, 138, 255)";
+      } else {
+        return "White";
+      } 
+
       return "hsl(" + parseInt(360 / total * d.id, 10) + ",90%,70%)";
     })
     .call(this.force.drag)

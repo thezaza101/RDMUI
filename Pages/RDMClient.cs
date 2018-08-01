@@ -13,7 +13,6 @@ namespace RDMUI.Pages
         public HttpClient HTTPClient {get;} = Helpers.NewHTTPClinet();
         public static Dictionary<Type, string> EP {get;}
         public bool ItemInFocus {get; set;}
-         
 
         static RDMClient()
         {
@@ -68,7 +67,6 @@ namespace RDMUI.Pages
         public List<ChangeSet> GetChangeSetsForTable(string tableID, bool ignoreChanges = false, bool listOnly = false)
         {
             List<ChangeSet> output;
-
             string attr = ignoreChanges ? "?tableID="+tableID+"&ignoreChanges=true" : "?tableID="+tableID;
             attr = listOnly ? attr + "&list=true" : attr;
             string data = HTTPClient.GetAsync(GetEndPoint<ChangeSet>()+attr).Result.Content.ReadAsStringAsync().Result;
@@ -85,7 +83,6 @@ namespace RDMUI.Pages
         public HttpResponseMessage PostItem<T>(object content)
         {
             return HTTPClient.PostAsync(GetEndPoint<T>(),Helpers.NewStringContent(content)).Result;
-
         }
 
         private string GetEndPoint<T>()
@@ -101,7 +98,5 @@ namespace RDMUI.Pages
         {
             return identifier.Substring(identifier.LastIndexOf('/')+1);
         }
-
-
     }
 }
