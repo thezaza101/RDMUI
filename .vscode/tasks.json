@@ -7,7 +7,7 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/RDMUI.csproj"
+                "${workspaceFolder}/src/RDMUI.csproj"
             ],
             "problemMatcher": "$msCompile"
         }
